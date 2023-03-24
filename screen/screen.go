@@ -9,6 +9,7 @@ import (
 const (
 	offsetVer = 4
 	offsetHor = 40
+	cellWidth = 2
 )
 
 var colors = []termbox.Attribute{
@@ -42,7 +43,9 @@ func (g *gameScreen) Render(board [][]int) {
 	for y, v := range board {
 		for x, h := range v {
 			color := colors[h]
-			termbox.SetCell(x+offsetHor, y+offsetVer, ' ', color, color)
+			for i := 0; i < cellWidth; i++ {
+				termbox.SetCell(cellWidth*x+offsetHor+i, y+offsetVer, ' ', color, color)
+			}
 		}
 	}
 

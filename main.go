@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"tetris/screen"
 	"tetris/tetris"
 	"time"
@@ -9,6 +10,7 @@ import (
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 
 	err := termbox.Init()
 	if err != nil {
@@ -23,7 +25,7 @@ func main() {
 		}
 	}()
 
-	const animationSpeed = 50 + time.Millisecond
+	const animationSpeed = 20 + time.Millisecond
 	ticker := time.NewTimer(time.Duration(animationSpeed))
 
 	game := tetris.NewGame()

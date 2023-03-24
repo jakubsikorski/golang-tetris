@@ -35,7 +35,7 @@ func (g *Game) init() {
 			g.board[y][x] = 0
 		}
 	}
-	g.position = vector{0, (BOARD_WIDTH / 2)}
+	g.position = vector{1, (BOARD_WIDTH / 2)}
 	g.tetromino = randomTetromino()
 
 	g.FallSpeed = time.NewTimer(time.Duration(defaultFallSpeed))
@@ -72,13 +72,13 @@ func (g *Game) GetBoard() [][]int {
 
 func (g *Game) getTetromino() {
 	g.tetromino = randomTetromino()
-	g.position = vector{0, (BOARD_WIDTH / 2)}
+	g.position = vector{1, (BOARD_WIDTH / 2)}
 }
 
 func (g *Game) movePossible(v vector) bool {
 	g.position.x += v.x
 	g.position.y += v.y
-	if g.collision(v) {
+	if g.collision() {
 		g.position.x -= v.x
 		g.position.y -= v.y
 		return false
@@ -86,30 +86,10 @@ func (g *Game) movePossible(v vector) bool {
 	return true
 }
 
-func (g *Game) MoveLeft() {
-	g.movePossible(vector{0, -1})
-}
-
-func (g *Game) MoveRight() {
-	g.movePossible(vector{0, 1})
-}
-
-func (g *Game) SpeedUp() {
-
-}
-
-func (g *Game) Rotate() {
-
-}
-
-func (g *Game) Drop() {
-
-}
-
-func (g *Game) collision(v vector) bool {
+func (g *Game) collision() bool {
 	for _, i := range g.tetromino.shape {
 		pos := g.blockOnBoardByPos(i)
-		if pos.x < 0 || pos.x >= BOARD_WIDTH {
+		if pos.x < 0 || pos.x >= BOARD_WIDTH || pos.y < 0 || pos.y >= BOARD_HEIGHT {
 			return true
 		}
 		if pos.y < 0 || pos.y >= BOARD_HEIGHT {
@@ -123,19 +103,51 @@ func (g *Game) collision(v vector) bool {
 	return false
 }
 
-func (g *Game) GameLoop() {
-	if !g.movePossible(vector{1, 0}) {
-		g.getTetromino()
-	}
-	g.resetFallSpeed()
-}
-
 func (g *Game) Start() {
 	g.state = gamePlay
 	g.getTetromino()
 	g.resetFallSpeed()
 }
 
+func (g *Game) GameLoop() {
+	if !g.movePossible(vector{1, 0}) {
+		g.placeTetromino()
+		g.getTetromino()
+	}
+	g.resetFallSpeed()
+}
+func (g *Game) placeTetromino() {
+	g.board = g.GetBoard()
+}
+
 func (g *Game) resetFallSpeed() {
 	g.FallSpeed.Reset(defaultFallSpeed)
+}
+
+func (g *Game) MoveLeft() {
+	g.movePossible(vector{0, -1})
+}
+
+func (g *Game) MoveRight() {
+	g.movePossible(vector{0, 1})
+}
+
+func (g *Game) SpeedUp() {
+	g.FallSpeed.Reset(10 * time.Millisecond)
+}
+
+func (g *Game) Rotate() {
+	g.tetromino.rotate()
+	if g.collision() {
+		g.tetromino.rotateBack()
+	}
+}
+
+func (g *Game) Drop() {
+	for {
+		if !g.movePossible(vector{1, 0}) {
+			g.FallSpeed.Reset(1 * time.Millisecond)
+			return
+		}
+	}
 }
