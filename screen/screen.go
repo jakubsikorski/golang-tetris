@@ -19,6 +19,7 @@ var colors = []termbox.Attribute{
 	termbox.ColorWhite,
 	termbox.ColorYellow,
 	termbox.ColorRed,
+	termbox.ColorMagenta,
 }
 
 type gameScreen struct{}

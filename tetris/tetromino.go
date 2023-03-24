@@ -52,6 +52,12 @@ var tetrominos = []tetromino{
 		color:     5,
 		canRotate: true,
 	},
+	{
+		// I shape
+		shape:     []vector{{0, -1}, {0, 0}, {0, 1}, {0, 2}},
+		color:     6,
+		canRotate: true,
+	},
 }
 
 func randomTetromino() tetromino {
@@ -59,13 +65,18 @@ func randomTetromino() tetromino {
 	return tetrominos[idx]
 }
 func (t *tetromino) rotateWithAngle(ang float64) {
-	cos := int(math.Round(math.Cos(ang)))
-	sin := int(math.Round(math.Sin(ang)))
-	for i, e := range t.shape {
-		ny := e.y*cos - e.x*sin
-		nx := e.y*sin - e.x*cos
+	// Construct the rotation matrix
+	rotMat := [2][2]int{
+		{int(math.Round(math.Cos(ang))), int(math.Round(-math.Sin(ang)))},
+		{int(math.Round(math.Sin(ang))), int(math.Round(math.Cos(ang)))},
+	}
 
-		t.shape[i] = vector{ny, nx}
+	// Apply the rotation to each coordinate in the shape
+	for i, e := range t.shape {
+		ny := rotMat[0][0]*e.x + rotMat[0][1]*e.y
+		nx := rotMat[1][0]*e.x + rotMat[1][1]*e.y
+
+		t.shape[i] = vector{nx, ny}
 	}
 }
 
