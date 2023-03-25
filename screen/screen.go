@@ -38,7 +38,7 @@ func (g *gameScreen) RenderAscii(board [][]int) {
 	}
 }
 
-func (g *gameScreen) Render(board [][]int) {
+func (g *gameScreen) Render(board [][]int, score int) {
 	termbox.Clear(termbox.ColorDarkGray, termbox.ColorDarkGray)
 
 	for y, v := range board {
@@ -49,7 +49,6 @@ func (g *gameScreen) Render(board [][]int) {
 			}
 		}
 	}
-	score := 5
 	scoreText := fmt.Sprintf("Score: %d", score)
 	for i, c := range scoreText {
 		termbox.SetCell(offsetHor+len(board[0])*cellWidth+i, offsetVer, c, termbox.ColorWhite, termbox.ColorRed)

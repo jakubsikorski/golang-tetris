@@ -56,7 +56,7 @@ func main() {
 			}
 		case <-ticker.C:
 			// scr.RenderAscii(game.GetBoard())
-			scr.Render(game.GetBoard())
+			scr.Render(game.GetBoard(), game.Score)
 			ticker.Reset(animationSpeed)
 		case <-game.FallSpeed.C:
 			game.GameLoop()

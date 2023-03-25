@@ -25,6 +25,7 @@ type Game struct {
 	tetromino tetromino
 	state     gameState
 	FallSpeed *time.Timer
+	Score     int
 }
 
 func (g *Game) init() {
@@ -138,17 +139,22 @@ func (g *Game) lineClear() {
 		line[i] = 0
 	}
 	emptyLine := [][]int{line}
+	score := 0
 	for y := 0; y < BOARD_HEIGHT; y++ {
+		isLineFull := true
 		for x := 0; x < BOARD_WIDTH; x++ {
 			if g.board[y][x] == 0 {
+				isLineFull = false
 				break
 			}
-			if x == BOARD_WIDTH-1 {
-				newBoard := append(emptyLine, g.board[:y]...)
-				g.board = append(newBoard, g.board[y+1:]...)
-			}
+		}
+		if isLineFull {
+			score++
+			newBoard := append(emptyLine, g.board[:y]...)
+			g.board = append(newBoard, g.board[y+1:]...)
 		}
 	}
+	g.Score += score * 100
 }
 
 func (g *Game) resetFallSpeed() {
