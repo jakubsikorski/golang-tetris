@@ -76,6 +76,9 @@ func (g *Game) getTetromino() {
 }
 
 func (g *Game) movePossible(v vector) bool {
+	if g.state != gamePlay {
+		return false
+	}
 	g.position.x += v.x
 	g.position.y += v.y
 	if g.collision() {
@@ -111,13 +114,41 @@ func (g *Game) Start() {
 
 func (g *Game) GameLoop() {
 	if !g.movePossible(vector{1, 0}) {
+		// Lock tetromino in place
 		g.placeTetromino()
+		// remove lines and TBD: add points
+		g.removeLines()
+		// get a new piece
 		g.getTetromino()
+		if g.collision() {
+			g.FallSpeed.Stop()
+			g.state = gameOver
+			return
+		}
 	}
 	g.resetFallSpeed()
 }
 func (g *Game) placeTetromino() {
 	g.board = g.GetBoard()
+}
+
+func (g *Game) removeLines() {
+	line := make([]int, BOARD_WIDTH)
+	for i := 0; i < BOARD_WIDTH; i++ {
+		line[i] = 0
+	}
+	emptyLine := [][]int{line}
+	for y := 0; y < BOARD_HEIGHT; y++ {
+		for x := 0; x < BOARD_WIDTH; x++ {
+			if g.board[y][x] == 0 {
+				break
+			}
+			if x == BOARD_WIDTH-1 {
+				newBoard := append(emptyLine, g.board[:y]...)
+				g.board = append(newBoard, g.board[y+1:]...)
+			}
+		}
+	}
 }
 
 func (g *Game) resetFallSpeed() {
