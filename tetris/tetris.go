@@ -117,7 +117,7 @@ func (g *Game) GameLoop() {
 		// Lock tetromino in place
 		g.placeTetromino()
 		// remove lines and TBD: add points
-		g.removeLines()
+		g.lineClear()
 		// get a new piece
 		g.getTetromino()
 		if g.collision() {
@@ -132,7 +132,7 @@ func (g *Game) placeTetromino() {
 	g.board = g.GetBoard()
 }
 
-func (g *Game) removeLines() {
+func (g *Game) lineClear() {
 	line := make([]int, BOARD_WIDTH)
 	for i := 0; i < BOARD_WIDTH; i++ {
 		line[i] = 0
