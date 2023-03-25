@@ -170,10 +170,16 @@ func (g *Game) MoveRight() {
 }
 
 func (g *Game) SpeedUp() {
+	if g.state != gamePlay {
+		return
+	}
 	g.FallSpeed.Reset(10 * time.Millisecond)
 }
 
 func (g *Game) Rotate() {
+	if g.state != gamePlay {
+		return
+	}
 	g.tetromino.rotate()
 	if g.collision() {
 		g.tetromino.rotateBack()
@@ -181,6 +187,9 @@ func (g *Game) Rotate() {
 }
 
 func (g *Game) Drop() {
+	if g.state != gamePlay {
+		return
+	}
 	for {
 		if !g.movePossible(vector{1, 0}) {
 			g.FallSpeed.Reset(1 * time.Millisecond)
